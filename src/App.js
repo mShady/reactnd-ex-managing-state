@@ -2,37 +2,21 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import Game from "./Game";
+import Score from "./Score";
 
 class App extends Component {
-  state = { ...this.getNewEquation(), numQuestions: 0, numCorrect: 0 };
+  state = { numQuestions: 0, numCorrect: 0 };
 
-  getNewEquation() {
-    let value1 = Math.floor(Math.random() * 100);
-    let value2 = Math.floor(Math.random() * 100);
-    let value3 = Math.floor(Math.random() * 100);
-    let proposedAnswer =
-      Math.floor(Math.random() * 3) + value1 + value2 + value3;
-    return {
-      value1,
-      value2,
-      value3,
-      proposedAnswer
-    };
-  }
-
-  gradeAnswer(Answer) {
-    let { value1, value2, value3, proposedAnswer } = this.state;
-
-    let isAnswerCorrect =
-      (value1 + value2 + value3 === proposedAnswer) === Answer;
-
+  updateScore(AnswerIsCorrect) {
     this.setState(currentState => ({
-      ...this.getNewEquation(),
-      numQuestions: currentState.numQuestions + 1,
-      numCorrect: isAnswerCorrect
-        ? currentState.numCorrect + 1
-        : currentState.numCorrect
+      numQuestions: currentState.numQuestions + 1
     }));
+
+    if (AnswerIsCorrect) {
+      this.setState(currentState => ({
+        numCorrect: currentState.numCorrect + 1
+      }));
+    }
   }
 
   render() {
@@ -42,29 +26,16 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">ReactND - Coding Practice</h1>
         </header>
-        <Game
-          value1={this.state.value1}
-          value2={this.state.value2}
-          value3={this.state.value3}
-          proposedAnswer={this.state.proposedAnswer}
-          onGradeAnswer={Answer => this.gradeAnswer(Answer)}
-          numCorrect={this.state.numCorrect}
-          numQuestions={this.state.numQuestions}
-        />
-        {/* <div className="game">
+        <div className="game">
           <h2>Mental Math</h2>
-          <div className="equation">
-            <p className="text">{`${this.state.value1} + ${
-              this.state.value2
-            } + ${this.state.value3} = ${this.state.proposedAnswer}`}</p>
-          </div>
-          <button onClick={() => this.gradeAnswer(true)}>True</button>
-          <button onClick={() => this.gradeAnswer(false)}>False</button>
+          <Game
+            onGradeAnswer={AnswerIsCorrect => this.updateScore(AnswerIsCorrect)}
+          />
           <Score
             numCorrect={this.state.numCorrect}
             numQuestions={this.state.numQuestions}
           />
-        </div> */}
+        </div>
       </div>
     );
   }
